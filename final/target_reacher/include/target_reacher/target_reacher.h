@@ -3,33 +3,26 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <string>
+#include <memory>
 #include "bot_controller/bot_controller.h"
-#include "ros2_aruco_interfaces/msg/aruco_markers.hpp"
-#include "tf2_ros/static_transform_broadcaster.h"
+#include <ros2_aruco_interfaces/msg/aruco_markers.hpp>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <std_msgs/msg/bool.hpp>
 
 // timer
 class TargetReacher : public rclcpp::Node
 {
 public:
-    TargetReacher(std::shared_ptr<BotController> const &bot_controller) : Node("target_reacher")
-    {
-        // Declaring the parameters.
-        this->declare_parameter<float>("aruco_target.x");
-        this->declare_parameter<float>("aruco_target.y");
-        this->declare_parameter<std::string>("final_destination.frame_id");
-        this->declare_parameter<float>("final_destination.aruco_0.x");
-        this->declare_parameter<float>("final_destination.aruco_0.y");
-        this->declare_parameter<float>("final_destination.aruco_1.x");
-        this->declare_parameter<float>("final_destination.aruco_1.y");
-        this->declare_parameter<float>("final_destination.aruco_2.x");
-        this->declare_parameter<float>("final_destination.aruco_2.y");
-        this->declare_parameter<float>("final_destination.aruco_3.x");
-        this->declare_parameter<float>("final_destination.aruco_3.y");
-        m_bot_controller = bot_controller;
+    TargetReacher(std::shared_ptr<BotController> const &bot_controller); 
 
-    }
+protected:
+
+    // void goal_check_callback(const std_msgs::msg::Bool::SharedPtr &msg);
+    void control_loop();
 
 private:
     // attributes
     std::shared_ptr<BotController> m_bot_controller;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr goal_subscription_; //!< A subcriber to the /goal_reached topic.
+    bool goal_reached_; //!< To store the goal reached state.
 };

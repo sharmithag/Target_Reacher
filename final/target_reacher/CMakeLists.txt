@@ -17,9 +17,10 @@ find_package(geometry_msgs REQUIRED)
 find_package(bot_controller REQUIRED)
 find_package(ros2_aruco_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(std_msgs REQUIRED)
 
 
-include_directories(include)
+include_directories(include/target_reacher)
 
 
 add_executable(target_reacher src/target_reacher.cpp src/main.cpp)
