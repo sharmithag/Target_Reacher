@@ -24,7 +24,7 @@ include_directories(include/target_reacher)
 
 
 add_executable(target_reacher src/target_reacher.cpp src/main.cpp)
-ament_target_dependencies(target_reacher bot_controller tf2_ros ros2_aruco_interfaces rclcpp geometry_msgs)
+ament_target_dependencies(target_reacher bot_controller tf2_ros ros2_aruco_interfaces rclcpp geometry_msgs std_msgs)
 
 
 #############

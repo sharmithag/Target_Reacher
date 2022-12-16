@@ -17,12 +17,21 @@ public:
 
 protected:
 
-    // void goal_check_callback(const std_msgs::msg::Bool::SharedPtr &msg);
+    void goal_check_callback(const std_msgs::msg::Bool::SharedPtr msg);
+    void aruco_callback(const ros2_aruco_interfaces::msg::ArucoMarkers::SharedPtr msg);
     void control_loop();
 
 private:
     // attributes
     std::shared_ptr<BotController> m_bot_controller;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr goal_subscription_; //!< A subcriber to the /goal_reached topic.
-    bool goal_reached_; //!< To store the goal reached state.
+    rclcpp::TimerBase::SharedPtr control_loop_; //!< The control loop for the whole system.
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr twist_publisher_;  //!< The pointer to the publisher.
+    rclcpp::Subscription<ros2_aruco_interfaces::msg::ArucoMarkers>::SharedPtr aruco_marker_; //!< Subscription to check the aruco marker
+    
+    // States of teh control loop
+    bool aruco_reached_; //!< To store the goal reached state.
+    bool aruco_goal_sent_; //!< To keep track of the goal send status.
+    bool finding_aruco_; //!< To keep track of finding the aruco
+    bool aruco_found_; //!< To check if aruco is found.
 };
