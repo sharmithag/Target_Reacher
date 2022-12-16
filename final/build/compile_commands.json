@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/build",
+  "command": "/usr/bin/c++  -DDEFAULT_RMW_IMPLEMENTATION=rmw_cyclonedds_cpp -DRCUTILS_ENABLE_FAULT_INJECTION -I/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/odom_updater/include/odom_updater -isystem /opt/ros/galactic/include  -g   -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/odom_updater.dir/app/main.cpp.o -c /home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/app/main.cpp",
+  "file": "/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/app/main.cpp"
+},
+{
+  "directory": "/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/build",
+  "command": "/usr/bin/c++  -DDEFAULT_RMW_IMPLEMENTATION=rmw_cyclonedds_cpp -DRCUTILS_ENABLE_FAULT_INJECTION -I/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/odom_updater/include/odom_updater -isystem /opt/ros/galactic/include  -g   -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/odom_updater.dir/src/odom_updater.cpp.o -c /home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/src/odom_updater.cpp",
+  "file": "/home/aneeshch/final_ws/src/enpm809y_FinalFall2022/final/odom_updater/src/odom_updater.cpp"
+}
+]
