@@ -30,8 +30,12 @@ private:
     rclcpp::Subscription<ros2_aruco_interfaces::msg::ArucoMarkers>::SharedPtr aruco_marker_; //!< Subscription to check the aruco marker
     
     // States of teh control loop
-    bool aruco_reached_; //!< To store the goal reached state.
+    bool goal_reached_; //!< To store the goal reached state.
     bool aruco_goal_sent_; //!< To keep track of the goal send status.
     bool finding_aruco_; //!< To keep track of finding the aruco
     bool aruco_found_; //!< To check if aruco is found.
+    bool final_goal_decoded_; //To check if the final goal is decoded.
+    bool final_goal_reached_; //To check if the final goal is reached.
+
+    int64_t marker_id_; //!< To store the marker ID read from the aruco marker.
 };
