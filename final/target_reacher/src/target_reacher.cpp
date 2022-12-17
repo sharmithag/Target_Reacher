@@ -73,7 +73,7 @@ void TargetReacher::control_loop()
             geometry_msgs::msg::Twist temp;
             temp.angular.z = 0.2;
             twist_publisher_->publish(temp);
-            RCLCPP_INFO(this->get_logger(), "Finsing the aruco marker.");
+            RCLCPP_INFO(this->get_logger(), "Finding the aruco marker.");
         }
         else if (!transform_created_)
         {
@@ -84,7 +84,7 @@ void TargetReacher::control_loop()
             RCLCPP_INFO(this->get_logger(), "ARUCO Decoded!");
 
             
-            RCLCPP_INFO(this->get_logger(), "Creating a static transform between %s and final_destination.", frame_id_.c_str());
+            RCLCPP_INFO(this->get_logger(), "Creating a static transform between %s and final_destination.", this->get_parameter("final_destination.frame_id").as_string().c_str());
             this->final_transform();
             // Listening to the transform
             tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -116,7 +116,8 @@ void TargetReacher::control_loop()
             std::this_thread::sleep_for(std::chrono::seconds(1));
             RCLCPP_INFO(this->get_logger(), "Thank you Prof. Zeid, TA and grader for this course.");
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            RCLCPP_INFO(this->get_logger(), "Now press ctrl+C to get done with this! Duh....-\\_(o_O)_/-");
+            RCLCPP_INFO(this->get_logger(), "Now press ctrl+C to get done with this!");
+            RCLCPP_INFO(this->get_logger(), "Duh....-\\_(o_O)_/-");
             exit(0);
         }
     }
@@ -131,14 +132,12 @@ void TargetReacher::aruco_callback(const ros2_aruco_interfaces::msg::ArucoMarker
 {
     aruco_found_ = true;
     marker_id_ = msg->marker_ids.at(0);
-    frame_id_ = msg->header.frame_id;
 
 }
 
 void TargetReacher::final_transform()
 {   
     int64_t marker_id = marker_id_;
-    std::string aruco = frame_id_;
     std::string goal_x = "final_destination.aruco_" + std::to_string(marker_id) + ".x";
     std::string goal_y = "final_destination.aruco_" + std::to_string(marker_id) + ".y";
 

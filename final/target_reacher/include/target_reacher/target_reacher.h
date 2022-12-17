@@ -47,7 +47,6 @@ private:
     bool final_goal_reached_; //!< To check if the final goal is reached.
 
     int64_t marker_id_; //!< To store the marker ID read from the aruco marker.
-    std::string frame_id_; //!< To store the frame ID of the aruco marker.
 
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_; //!< Buffer for the final goal transform.
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_; //!< Tf listener for the final transform.
