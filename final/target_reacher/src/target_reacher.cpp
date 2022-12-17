@@ -22,6 +22,7 @@ TargetReacher::TargetReacher(std::shared_ptr<BotController> const &bot_controlle
     goal_reached_ = false;
     finding_aruco_ = false;
     aruco_found_ = false;
+    transform_created_ = false;
     final_goal_decoded_ = false;
     final_goal_reached_ = false;
 
@@ -33,6 +34,9 @@ TargetReacher::TargetReacher(std::shared_ptr<BotController> const &bot_controlle
 
     // The publisher to send the twist messages
     twist_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/robot1/cmd_vel", 10);
+
+    // The final transformer
+    final_goal_transform_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
     // Creating the control loop
     control_loop_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&TargetReacher::control_loop, this));
@@ -69,22 +73,29 @@ void TargetReacher::control_loop()
             geometry_msgs::msg::Twist temp;
             temp.angular.z = 0.2;
             twist_publisher_->publish(temp);
-            RCLCPP_INFO(this->get_logger(), "Finsing the aruco marker");
+            RCLCPP_INFO(this->get_logger(), "Finsing the aruco marker.");
         }
-        else
+        else if (!transform_created_)
         {
+            // ROBOT STATE: Decoding the aruco marker.
             geometry_msgs::msg::Twist temp;
             temp.angular.z = 0.0;
             twist_publisher_->publish(temp);
             RCLCPP_INFO(this->get_logger(), "ARUCO Decoded!");
 
-            std::string goal_x = "final_destination.aruco_" + std::to_string(marker_id_) + ".x";
-            std::string goal_y = "final_destination.aruco_" + std::to_string(marker_id_) + ".y";
-
-            RCLCPP_INFO(this->get_logger(), "Sending Robot to final goal!");
-            m_bot_controller->set_goal(this->get_parameter(goal_x).as_double(), this->get_parameter(goal_y).as_double());
-            final_goal_decoded_ = true;
-            goal_reached_ = false;
+            
+            RCLCPP_INFO(this->get_logger(), "Creating a static transform between %s and final_destination.", frame_id_.c_str());
+            this->final_transform();
+            // Listening to the transform
+            tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+            tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+            RCLCPP_INFO(this->get_logger(), "Transform created.");
+            transform_created_ = true;
+        }
+        else
+        {
+            // ROBOT STATE: Transform the final destination to odom and send goal
+            this->transform_and_send_goal();           
         }
     }
     else
@@ -95,9 +106,9 @@ void TargetReacher::control_loop()
         }
         else
         {
-            RCLCPP_INFO(this->get_logger(), "Goal Reached");
+            RCLCPP_INFO(this->get_logger(), "Goal Reached.");
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            RCLCPP_INFO(this->get_logger(), "Exiting");
+            RCLCPP_INFO(this->get_logger(), "Exiting.");
             std::this_thread::sleep_for(std::chrono::seconds(1));
             RCLCPP_INFO(this->get_logger(), "Bye, take care!");
             std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -120,4 +131,56 @@ void TargetReacher::aruco_callback(const ros2_aruco_interfaces::msg::ArucoMarker
 {
     aruco_found_ = true;
     marker_id_ = msg->marker_ids.at(0);
+    frame_id_ = msg->header.frame_id;
+
+}
+
+void TargetReacher::final_transform()
+{   
+    int64_t marker_id = marker_id_;
+    std::string aruco = frame_id_;
+    std::string goal_x = "final_destination.aruco_" + std::to_string(marker_id) + ".x";
+    std::string goal_y = "final_destination.aruco_" + std::to_string(marker_id) + ".y";
+
+    geometry_msgs::msg::TransformStamped final_transform;
+
+    final_transform.header.stamp = this->get_clock()->now();
+    final_transform.header.frame_id = this->get_parameter("final_destination.frame_id").as_string();
+    final_transform.child_frame_id = "final_destination";
+
+    // Storing the translation
+    final_transform.transform.translation.x = this->get_parameter(goal_x).as_double();
+    final_transform.transform.translation.y = this->get_parameter(goal_y).as_double();
+    final_transform.transform.translation.z = 0.0;
+
+    // Storing the rotation
+    final_transform.transform.rotation.w = 1.0;
+    final_transform.transform.rotation.x = 0;
+    final_transform.transform.rotation.y = 0;
+    final_transform.transform.rotation.z = 0;
+
+    // Sending the transform
+    final_goal_transform_->sendTransform(final_transform);
+
+    
+}
+
+void TargetReacher::transform_and_send_goal()
+{
+    geometry_msgs::msg::TransformStamped odom_transform;
+
+    // Transforming the /final_destination to /robot1/odom
+    
+    try
+    {
+        odom_transform = tf_buffer_->lookupTransform("robot1/odom", "final_destination", tf2::TimePointZero);
+        RCLCPP_INFO(this->get_logger(), "Found transform.");
+        m_bot_controller->set_goal(odom_transform.transform.translation.x, odom_transform.transform.translation.y);
+        final_goal_decoded_ = true;
+        goal_reached_ = false;
+    }
+    catch(const tf2::TransformException & ex)
+    {
+        RCLCPP_WARN(this->get_logger(), "Couldn't find transform.");
+    }
 }

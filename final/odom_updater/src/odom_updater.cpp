@@ -15,12 +15,12 @@ void BroadcastPose::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
     // To store the current message
     geometry_msgs::msg::TransformStamped current_msg; 
 
-    // Tf variables
+    // Creating the header
     current_msg.header.stamp = this->get_clock()->now();
     current_msg.header.frame_id = "robot1/odom";
     current_msg.child_frame_id = "robot1/base_footprint";
 
-    // Storing the msg variable
+    // Storing the translation
     current_msg.transform.translation.x = msg->pose.pose.position.x;
     current_msg.transform.translation.y = msg->pose.pose.position.y;
     current_msg.transform.translation.z = msg->pose.pose.position.z;

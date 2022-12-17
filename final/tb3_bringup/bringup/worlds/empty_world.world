@@ -418,7 +418,7 @@
             <static>1</static>
             <include>
                 <uri>model://aruco_marker_0</uri>
-                <pose>5.0 5.0 0.2 0 0 0</pose>
+                <pose>5.0 5.0 0.3 0 0 0</pose>
             </include>
         </model>
 
