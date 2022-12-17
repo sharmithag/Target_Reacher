@@ -40,7 +40,7 @@ def generate_launch_description():
 
     # Names and poses of the robots
     robots = [
-        {'name': 'robot1', 'x_pose': 3.0, 'y_pose': 0.0,
+        {'name': 'robot1', 'x_pose': 10.0, 'y_pose': 10.0,
             'z_pose': 0.01, 'yaw_pose': 0.0},
         # {'name': 'robot2', 'x_pose': 9.0, 'y_pose': -4.0,
         #     'z_pose': 0.01, 'yaw_pose': -1.57},
