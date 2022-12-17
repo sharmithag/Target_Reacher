@@ -1,3 +1,15 @@
+/**
+ * @file target_reacher.cpp
+ * @author Aneesh Chodisetty (aneeshch@umd.edu)
+ * @author Orlandis Devon Smith (osmith15@umd.edu)
+ * @author Sharmitha Ganesan (sganesa3@umd.edu)
+ * @brief The implementation for the TargetReacher class.
+ * @version 0.1
+ * @date 2022-12-16
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <target_reacher.h>
 
 TargetReacher::TargetReacher(std::shared_ptr<BotController> const &bot_controller)
@@ -64,7 +76,7 @@ void TargetReacher::control_loop()
             }
             else
             {
-                RCLCPP_INFO(this->get_logger(), "Travelling towards ARUCO!");
+                RCLCPP_INFO(this->get_logger(), "Travelling towards ARUCO marker!");
             }
         }
         else if (!aruco_found_)
@@ -77,16 +89,19 @@ void TargetReacher::control_loop()
         }
         else if (!transform_created_)
         {
-            // ROBOT STATE: Decoding the aruco marker.
+            // ROBOT STATE: Decoding the aruco marker.        
+            RCLCPP_INFO(this->get_logger(), "ARUCO Decoded!");
+
+            // Stopping the robot from moving because we found the aruco marker.
             geometry_msgs::msg::Twist temp;
             temp.angular.z = 0.0;
             twist_publisher_->publish(temp);
-            RCLCPP_INFO(this->get_logger(), "ARUCO Decoded!");
 
-            
+            // Now creating a static transform between the frame id and final transformation.            
             RCLCPP_INFO(this->get_logger(), "Creating a static transform between %s and final_destination.", this->get_parameter("final_destination.frame_id").as_string().c_str());
             this->final_transform();
-            // Listening to the transform
+
+            // Listening to the static transform transform
             tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
             tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
             RCLCPP_INFO(this->get_logger(), "Transform created.");
@@ -94,7 +109,7 @@ void TargetReacher::control_loop()
         }
         else
         {
-            // ROBOT STATE: Transform the final destination to odom and send goal
+            // ROBOT STATE: Transform the final destination to odom and send goal.
             this->transform_and_send_goal();           
         }
     }
@@ -102,10 +117,12 @@ void TargetReacher::control_loop()
     {
         if (!goal_reached_)
         {
+            // Robot moving towards the final goal.
             RCLCPP_INFO(this->get_logger(), "Travelling towards Final goal!");
         }
         else
         {
+            // Goal found, ending the node.
             RCLCPP_INFO(this->get_logger(), "Goal Reached.");
             std::this_thread::sleep_for(std::chrono::seconds(1));
             RCLCPP_INFO(this->get_logger(), "Exiting.");
@@ -118,6 +135,8 @@ void TargetReacher::control_loop()
             std::this_thread::sleep_for(std::chrono::seconds(1));
             RCLCPP_INFO(this->get_logger(), "Now press ctrl+C to get done with this!");
             RCLCPP_INFO(this->get_logger(), "Duh....-\\_(o_O)_/-");
+            RCLCPP_INFO(this->get_logger(), "___________________");
+            rclcpp::shutdown();
             exit(0);
         }
     }
@@ -130,17 +149,19 @@ void TargetReacher::goal_check_callback(const std_msgs::msg::Bool::SharedPtr msg
 
 void TargetReacher::aruco_callback(const ros2_aruco_interfaces::msg::ArucoMarkers::SharedPtr msg)
 {
-    aruco_found_ = true;
     marker_id_ = msg->marker_ids.at(0);
+    aruco_found_ = true;
 
 }
 
 void TargetReacher::final_transform()
 {   
+    // The marker ID.
     int64_t marker_id = marker_id_;
     std::string goal_x = "final_destination.aruco_" + std::to_string(marker_id) + ".x";
     std::string goal_y = "final_destination.aruco_" + std::to_string(marker_id) + ".y";
 
+    // Creating the static transform
     geometry_msgs::msg::TransformStamped final_transform;
 
     final_transform.header.stamp = this->get_clock()->now();
@@ -169,7 +190,6 @@ void TargetReacher::transform_and_send_goal()
     geometry_msgs::msg::TransformStamped odom_transform;
 
     // Transforming the /final_destination to /robot1/odom
-    
     try
     {
         odom_transform = tf_buffer_->lookupTransform("robot1/odom", "final_destination", tf2::TimePointZero);

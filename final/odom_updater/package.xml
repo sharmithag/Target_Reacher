@@ -3,8 +3,10 @@
 <package format="3">
   <name>odom_updater</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="ch.aneesh1996@gmail.com">aneeshch</maintainer>
+  <description>A package to perform dynamic transform between robot1/odom and robot1/base_footprint frames.</description>
+  <maintainer email="aneeshch@umd.edu">Aneesh Chodisetty</maintainer>
+  <maintainer email="osmith15@umd.edu">Orlandis Devon Smith</maintainer>
+  <maintainer email="sganesa3@umd.edu">Sharmitha Ganesan</maintainer>
   <license>MIT license</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

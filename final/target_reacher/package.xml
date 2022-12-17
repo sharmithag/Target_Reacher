@@ -4,11 +4,10 @@
   <name>target_reacher</name>
   <version>0.0.0</version>
   <description>Main package for the final project</description>
-  <maintainer email="student1@email.com">student1</maintainer>
-  <maintainer email="student2@email.com">student2</maintainer>
-  <maintainer email="student3@email.com">student3</maintainer>
-  <maintainer email="student4@email.com">student4</maintainer>
-  <license>TODO: License declaration</license>
+  <maintainer email="aneeshch@umd.edu">Aneesh Chodisetty</maintainer>
+  <maintainer email="osmith15@umd.edu">Orlandis Devon Smith</maintainer>
+  <maintainer email="sganesa3@umd.edu">Sharmitha Ganesan</maintainer>
+  <license>MIT License</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

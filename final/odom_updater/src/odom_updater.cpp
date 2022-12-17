@@ -1,3 +1,15 @@
+/**
+ * @file odom_updater.cpp
+ * @author Aneesh Chodisetty (aneeshch@umd.edu)
+ * @author Orlandis Devon Smith (osmith15@umd.edu)
+ * @author Sharmitha Ganesan (sganesa3@umd.edu)
+ * @brief The definition for the BroadcastPose class.
+ * @version 0.1
+ * @date 2022-12-16
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <odom_updater.h>
 
 BroadcastPose::BroadcastPose(const std::string &node_name)

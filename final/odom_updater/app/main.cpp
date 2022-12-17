@@ -1,3 +1,16 @@
+/**
+ * @file main.cpp
+ * @author Aneesh Chodisetty (aneeshch@umd.edu)
+ * @author Orlandis Devon Smith (osmith15@umd.edu)
+ * @author Sharmitha Ganesan (sganesa3@umd.edu)
+ * @brief The main function that spins the created BroadcastPose node.
+ * @version 0.1
+ * @date 2022-12-16
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <memory>
 
 #include <odom_updater.h>

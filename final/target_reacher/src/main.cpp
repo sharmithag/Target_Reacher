@@ -1,3 +1,15 @@
+/**
+ * @file main.cpp
+ * @author Aneesh Chodisetty (aneeshch@umd.edu)
+ * @author Orlandis Devon Smith (osmith15@umd.edu)
+ * @author Sharmitha Ganesan (sganesa3@umd.edu)
+ * @brief The main file that spins the launches the BotController and TargetReacher nodes.
+ * @version 0.1
+ * @date 2022-12-16
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <rclcpp/rclcpp.hpp>
 #include <target_reacher.h>
 #include "bot_controller/bot_controller.h"
